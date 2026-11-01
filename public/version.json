@@ -1,1 +1,1 @@
-{"v": "4.1.39", "date": "2026-11-01", "notes": "Sauvegardes : le serveur sauvegarde chaque nuit ; choix de la date à restaurer"}
+{"v": "4.1.40", "date": "2026-11-01", "notes": "Protection : avertissement avant de remplacer les données du serveur ; sauvegardes de nuit"}
