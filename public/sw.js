@@ -1,6 +1,6 @@
-const C="resto-caisse-4.1.60";const CORE=["./","./manifest.webmanifest","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./bp.js","./jspdf.js","./xlsx.js"];
+const C="resto-caisse-4.1.61";const CORE=["./","./manifest.webmanifest","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./bp.js?v=4.1.61","./jspdf.js?v=4.1.61","./xlsx.js?v=4.1.61"];
 const LIBS=["https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js","https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(CORE).then(()=>Promise.all(LIBS.map(u=>c.add(new Request(u,{mode:"cors"})).catch(()=>{}))))).then(()=>self.skipWaiting()))});
+self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(CORE.map(u=>new Request(u,{cache:"reload"}))).then(()=>Promise.all(LIBS.map(u=>c.add(new Request(u,{mode:"cors"})).catch(()=>{}))))).then(()=>self.skipWaiting()))});
 self.addEventListener("message",e=>{if(e.data==="skip")self.skipWaiting()});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k.startsWith("resto-caisse-")).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{const r=e.request;if(r.method!=="GET")return;const u=new URL(r.url);

@@ -8,3 +8,9 @@
   Cache-Control: no-cache
 /manifest.webmanifest
   Cache-Control: no-cache
+/bp.js
+  Cache-Control: no-cache
+/jspdf.js
+  Cache-Control: no-cache
+/xlsx.js
+  Cache-Control: no-cache
