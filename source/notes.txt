@@ -1,1 +1,1 @@
-Corrections de l'audit : prix QR à saisir, archives, photos allégées, mises à jour plus légères, salon fiabilisé
+Suivi des erreurs : les erreurs de chaque appareil remontent au développeur

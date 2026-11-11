@@ -1,4 +1,4 @@
-const C="resto-caisse-4.1.81";const CL="resto-caisse-libs";const CORE=["./","./manifest.webmanifest","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png"];const LZ=["./bp.js?h=5c22941842", "./jspdf.js?h=4b39c897d8", "./xlsx.js?h=31e9848e80"];
+const C="resto-caisse-4.1.82";const CL="resto-caisse-libs";const CORE=["./","./manifest.webmanifest","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png"];const LZ=["./bp.js?h=5c22941842", "./jspdf.js?h=4b39c897d8", "./xlsx.js?h=31e9848e80"];
 const LIBS=["https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js","https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"];
 /* les fichiers lourds (photos, PDF, Excel) vont dans un cache à part, gardé d'une version à l'autre : seuls ceux qui ont changé sont téléchargés */
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(CORE.map(u=>new Request(u,{cache:"reload"}))).then(()=>Promise.all(LIBS.map(u=>c.add(new Request(u,{mode:"cors"})).catch(()=>{})))))

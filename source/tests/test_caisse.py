@@ -50,6 +50,8 @@ def rpc(fn, p):
             if int(p.get('base', -1)) != SRV['ver']: return {'ok': False, 'stale': True, 'ver': SRV['ver']}
             SRV['ver'] += 1; SRV['data'] = apply_ops(SRV['data'], p.get('ops')); SRV['journal'][SRV['ver']] = p.get('ops') or []
             return {'ok': True, 'ver': SRV['ver']}
+    if fn == 'yont_err':
+        SRV.setdefault('errors', []).extend(p.get('items') or []); return {'ok': True, 'n': len(p.get('items') or [])}
     if fn == 'yont_backup': return {'ok': True, 'fichier': 'test.json', 'fichiers': [], 'mois': [], 'annees': []}
     if fn == 'yont_qr_staff': return {'ok': True, 'commandes': []}
     return {'ok': True}
@@ -74,7 +76,7 @@ async def main():
         async def phone(name, pw):
             ctx = await b.new_context(viewport={'width': 400, 'height': 800}); pg = await ctx.new_page()
             await pg.route('https://test.supabase.co/**', route_for(name))
-            pg.on('pageerror', lambda e: errs.append(name + ': ' + str(e))); pg.on('dialog', lambda d: asyncio.ensure_future(d.accept()))
+            pg.on('pageerror', lambda e: None if 'erreur de test volontaire' in str(e) else errs.append(name + ': ' + str(e))); pg.on('dialog', lambda d: asyncio.ensure_future(d.accept()))
             await pg.goto('file://' + TEST); await pg.wait_for_timeout(1200)
             await pg.fill('#lgU', 'olivier'); await pg.fill('#lgP', '0000'); await pg.click('#loginForm button:not(.eye):not([data-forgot])'); await pg.wait_for_timeout(300)
             await pg.fill('#np1', pw); await pg.fill('#np2', pw); await pg.click('#pwForm button'); await pg.wait_for_timeout(400)
@@ -122,6 +124,10 @@ async def main():
         await sync_all()
         check('le serveur garde les photos hors des données', not any(k in (SRV['data'].get('photos') or {}) for k in ['castel', 'heineken']))
         check('aucune erreur JavaScript', not errs, '; '.join(errs[:3]))
+        # suivi des erreurs : une erreur volontaire doit arriver au serveur avec l'écran et la version
+        await EA('setTimeout(()=>{throw new Error("erreur de test volontaire")},0)'); await A.wait_for_timeout(300); await EA('errFlush()'); await A.wait_for_timeout(800)
+        got = [e for e in SRV.get('errors', []) if 'erreur de test volontaire' in e.get('msg', '')]
+        check('les erreurs des appareils remontent au serveur', bool(got) and bool(got[0].get('ver')) and bool(got[0].get('vue')), json.dumps(got[:1], ensure_ascii=False)[:160])
         await b.close()
     print('\n' + ('TOUT EST BON' if not FAIL else f'{len(FAIL)} contrôle(s) raté(s)'))
     sys.exit(1 if FAIL else 0)

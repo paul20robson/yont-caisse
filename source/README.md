@@ -27,4 +27,5 @@ git add -A && git commit -m "Version x.y.z" && git push   # Cloudflare publie to
 ## Serveur (Supabase, schéma `yont`)
 - `public.yont_sync` : synchronisation (versions + journal) ; `init` garde une copie de l'ancien contenu avant de le remplacer.
 - `public.yont_backup` : sauvegardes (30 nuits, 12 mois, une par an) ; tâche `yont-sauvegarde-nuit` à 02 h (Douala).
+- `public.yont_err` : erreurs envoyées par les appareils (500 dernières), visibles dans Développeur → Erreurs des appareils.
 - `yont.archive_old()` : chaque nuit à 02 h 30, ce qui a plus de 400 jours part dans `yont.archives` ; `public.yont_archive` pour les lire.

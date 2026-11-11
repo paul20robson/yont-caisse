@@ -826,7 +826,7 @@ const IDB={db:null,
   set(k,v){return new Promise((res,rej)=>{try{const t=IDB.db.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=()=>res(true);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)}catch(e){rej(e)}})}};
 const backupJSON=()=>JSON.stringify(S,(k,v)=>(k==="pass"||k==="cle")&&typeof v==="string"?undefined:v);
 /* crochets : les modules s'inscrivent ici au lieu de remplacer render() (avant / après l'affichage) */
-const HOOK={pre:[],post:[]};const hook=f=>{try{f()}catch(e){}};
+const HOOK={pre:[],post:[]};const hook=f=>{try{f()}catch(e){try{errReport(e,"affichage")}catch(_){}}};
 function render(){HOOK.pre.forEach(hook);render0();HOOK.post.forEach(hook)}
 /* enregistrement sur l'appareil regroupé (au plus toutes les 300 ms), forcé quand l'application passe en arrière-plan */
 let SAVE_T=0;function saveFlush(){if(SAVE_T){clearTimeout(SAVE_T);SAVE_T=0;saveLocal()}}
@@ -3244,6 +3244,27 @@ async function arcExcel(an,kind){try{toast("Préparation du fichier…");await l
   await saveFile(`Archives_${an}_${kind}.xlsx`,XLSX.write(wb,{bookType:"xlsx",type:"array"}));log(`Archives ${an} exportées (${ARC_K[kind]||kind})`);toast("Fichier Excel prêt")}catch(e){toast("Export impossible : "+(e.message||e))}}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-arc-xl],[data-arc-reload]");if(!b||!ui.session||!can("admin"))return;if(b.dataset.arcXl){const[an,k]=b.dataset.arcXl.split(":");arcExcel(an,k)}else{ARC.list=null;arcLoad();render()}});
 
+/* ================= SUIVI DES ERREURS DES APPAREILS ================= */
+/* chaque erreur JavaScript d'un appareil est notée (sans données de vente), gardée même hors ligne,
+   puis envoyée au serveur ; le développeur les lit dans Développeur → Erreurs des appareils */
+const ERRK="yont_errq";
+function errQ(){try{return JSON.parse(localStorage.getItem(ERRK)||"[]")}catch(e){return ui.errq||(ui.errq=[])}}
+function errPut(q){try{localStorage.setItem(ERRK,JSON.stringify(q.slice(-50)))}catch(e){ui.errq=q.slice(-50)}}
+function errReport(e,where){try{const msg=String(e&&e.message||e||"?").slice(0,400)+(where?` [${where}]`:"");
+  if(/ResizeObserver loop|^Script error\.?$|Failed to fetch|NetworkError|Load failed|AbortError/i.test(msg))return;
+  const q=errQ();const x=q.find(y=>y.msg===msg);if(x){x.nb=(x.nb||1)+1;x.ts=Date.now()}
+  else q.push({msg,stack:String(e&&e.stack||"").slice(0,1800),vue:String(ui.view||""),ver:APP_VERSION,dev:(()=>{try{return devName()}catch(_){return""}})(),usr:(()=>{try{return S.user?staffName(S.user):""}catch(_){return""}})(),ts:Date.now(),nb:1});
+  errPut(q);clearTimeout(ui.errT);ui.errT=setTimeout(errFlush,5000)}catch(_){}}
+async function errFlush(){try{const q=errQ();if(!q.length||!navigator.onLine||!cloudOn()||!isSupa(cloud().url))return;const j=await supaRpc("yont_err",{op:"log",items:q.slice(0,20)});if(j&&j.ok)errPut(errQ().slice(q.slice(0,20).length))}catch(e){}}
+addEventListener("error",e=>errReport(e.error||e.message,"page"));
+addEventListener("unhandledrejection",e=>errReport(e.reason,"promesse"));
+addEventListener("online",()=>setTimeout(errFlush,3000));setInterval(errFlush,120000);
+async function errLoad(){const box=$("#errBox");if(!box)return;box.innerHTML='<p class="muted">Chargement…</p>';
+  try{const j=await supaRpc("yont_err",{op:"liste"});if(!j.ok)throw new Error(j.erreur||"refusé");const L=j.erreurs||[];
+    box.innerHTML=L.length?`<div class="tbl"><table><thead><tr><th>Dernière fois</th><th class="num">Nb</th><th>Appareil / personne</th><th>Version · écran</th><th>Erreur</th></tr></thead><tbody>${L.map(x=>`<tr><td>${dt(new Date(x.last).getTime())}</td><td class="num">${x.nb}</td><td>${esc(x.dev||"")}<br><small class="muted">${esc(x.usr||"")}</small></td><td>${esc(x.ver||"")}<br><small class="muted">${esc(x.vue||"")}</small></td><td><b>${esc(x.msg)}</b>${x.stack?`<details><summary class="muted">détail</summary><pre style="white-space:pre-wrap;font-size:.72rem;margin:4px 0 0">${esc(x.stack)}</pre></details>`:""}</td></tr>`).join("")}</tbody></table></div>`:'<p class="muted" style="margin:0">Aucune erreur signalée par les appareils.</p>'}
+  catch(e){box.innerHTML=`<p class="muted">Liste impossible : ${esc(e.message||"connexion")}</p>`}}
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-err-load]")&&isDev()){errFlush().then(errLoad)}});
+
 /* ---------- IMPÔT GÉNÉRAL SYNTHÉTIQUE ---------- */
 const IGS_DEF=[[500000,20000],[1000000,30000],[1500000,40000],[2000000,50000],[2500000,60000],[5000000,150000],[10000000,300000],[20000000,500000],[30000000,1000000],[50000000,2000000]];
 const igsCfg=()=>S.settings.igsCfg||(S.settings.igsCfg={seuil:50000000,bareme:IGS_DEF.map(x=>[...x]),prev:{}});
@@ -3393,7 +3414,8 @@ function vDev(){if(!isDev())return"";const raw=JSON.stringify(S);const kb=Math.r
   <div class="panel"><h3>Contrôle des données</h3>${k.err?`<p>${ok(false,"Erreur de calcul : "+esc(k.err))}</p>`:`<div style="display:grid;gap:8px">
     <div>${ok(k.D===k.C,`Journal comptable équilibré · débit ${fmt(k.D)} · crédit ${fmt(k.C)}`)}</div>
     <div>${ok(k.res===k.net,`Résultat comptable ${fmt(k.res)} = rentabilité ${fmt(k.net)}${k.res!==k.net?" · écart "+fmt(k.res-k.net):""}`)}</div>
-    <div>${ok(k.cf===0,`Centre de formation : résultat détaillé = restaurant − société${k.cf?" · écart "+fmt(k.cf):""}`)}</div><div>${ok(!k.neg,`${k.neg} boisson(s) en stock négatif`)}</div><div>${ok(!k.empty,`${k.empty} facture(s) sans article`)}</div><div>${ok(!k.noPw,`${k.noPw} utilisateur(s) sans mot de passe personnel`)}</div></div>`}
+    <div>${ok(k.cf===0,`Centre de formation : résultat détaillé = restaurant − société${k.cf?" · écart "+fmt(k.cf):""}`)}</div><div>${ok(!k.neg,`${k.neg} boisson(s) en stock négatif`)}</div><div>${ok(!k.empty,`${k.empty} facture(s) sans article`)}</div><div>${ok(!k.noPw,`${k.noPw} utilisateur(s) sans mot de passe personnel`)}</div></div>
+  <div class="panel" style="margin-top:12px"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h3 style="margin:0">Erreurs des appareils</h3><button type="button" class="btn sm" data-err-load>Afficher</button></div><div id="errBox"><p class="muted" style="margin:0">Les erreurs de tous les appareils remontent ici (sans données de vente). Touchez Afficher.</p></div></div>`}
     <div class="row" style="margin-top:10px"><button class="btn sm" data-go="dev">Relancer le contrôle</button></div></div>
   ${menuAccessPanel()}
   <div class="panel"><h3>Mots de passe (tous les comptes)</h3><p class="muted" style="margin:0 0 10px">Donnez un mot de passe provisoire à n'importe qui, gérant compris. La personne choisira le sien à la prochaine connexion.</p>
