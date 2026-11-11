@@ -1,0 +1,10 @@
+node_modules/
+out/
+pwa/index.html
+pwa/sw.js
+pwa/bp.js
+pwa/jspdf.js
+pwa/xlsx.js
+pwa/version.json
+pwa/_headers
+pwa/LISEZMOI.txt

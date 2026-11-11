@@ -1,0 +1,6 @@
+{
+  "name": "yont-caisse-source",
+  "private": true,
+  "description": "Outils embarqués dans YONT Caisse (Excel et PDF)",
+  "dependencies": { "xlsx": "0.18.5", "jspdf": "2.5.1" }
+}
