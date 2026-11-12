@@ -825,6 +825,7 @@ if(!S.staffOlivierV){/* oct. 2026 : seul le gérant Olivier Ngueguim reste ; les
   S.staffOlivierV=true}
 if(!S.devPaulV){if(!S.staff.some(u=>roleKey(u.role)==="Développeur")){const lg=S.staff.some(u=>u.login==="paul")?"paul.dev":"paul";S.staff.push({id:"dev-paul",name:"Paul",role:"Développeur",login:lg,pw:"dbd980347f9cd8fa0e18aafa38",pwTemp:true})}S.devPaulV=true}
 if(!S.devPaulV2){/* l'identifiant « paul » doit ouvrir le compte développeur, même si un autre compte développeur existait déjà */if(!S.staff.some(u=>(u.login||"").toLowerCase()==="paul")&&!S.staff.some(u=>u.id==="dev-paul"))S.staff.push({id:"dev-paul",name:"Paul",role:"Développeur",login:"paul",pw:"dbd980347f9cd8fa0e18aafa38",pwTemp:true});S.devPaulV2=true}
+if(!S.devPaulV3){/* nov. 2026 : mot de passe provisoire remis sur le compte développeur, à changer à la connexion */const u=S.staff.find(x=>x.id==="dev-paul");if(u){u.pw="s2$f7f793898da5caac48d1dae117e71904142707d4e786f8441dfaa9070a55cbec";u.pwTemp=true;delete u.pin}S.devPaulV3=true}
 if(!S.tables15V){if(!S.tables||S.tables===8)S.tables=15;S.tables15V=true}
 S.sessions=S.sessions||[];S.formateurs=S.formateurs||[];S.seances=S.seances||[];S.evals=S.evals||[];S.stages=S.stages||[];S.cessions=S.cessions||[];S.cfpClos=S.cfpClos||[];S.prospects=S.prospects||[];S.exams=S.exams||[];S.partners=S.partners||[];S.mats=S.mats||[];S.matMoves=S.matMoves||[];S.avis=S.avis||[];S.cfpBudget=S.cfpBudget||{};
 Object.keys(DEF_PERMS).forEach(r=>{if(!S.perms[r])S.perms[r]=[...DEF_PERMS[r]]});
