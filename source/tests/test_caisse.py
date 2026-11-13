@@ -32,11 +32,28 @@ def apply_ops(st, ops):
         elif op.get('del'): st.pop(k, None)
         else: st[k] = op.get('v')
     return st
+KEYS = {'test-cle': True, 'cle-caisse': False}   # clé de l'espace (gérant) et clé d'un appareil du personnel
+PROT = ['sales', 'audit', 'log', 'closures', 'salonTk', 'salonClo', 'logins', 'staff']
+def ops_refus(st, ops):
+    """Même règle que yont.ops_refus sur le serveur."""
+    for op in ops or []:
+        k = op['k']
+        if k in ('emp', 'payroll', 'payCfg'): return f'« {k} » réservé au gérant'
+        if k not in PROT: continue
+        if 'v' in op or op.get('del') or op.get('d'): return f'suppression ou remplacement dans « {k} » réservé au gérant'
+        old = {x.get('id'): x for x in (st.get(k) or []) if isinstance(x, dict)}
+        for e in op.get('u', []):
+            o = old.get(e.get('id'))
+            if o is None: continue
+            if k in ('audit', 'log', 'closures', 'salonClo', 'logins') and o != e: return f'modification dans « {k} » refusée'
+            if k == 'sales' and (o.get('items') != e.get('items') or o.get('total') != e.get('total')): return 'articles ou total d\'une facture existante (« sales »)'
+    return None
 def rpc(fn, p):
-    if p.get('cle') != 'test-cle': return {'ok': False, 'erreur': 'Clé incorrecte'}
+    if p.get('cle') not in KEYS: return {'ok': False, 'erreur': 'Clé incorrecte'}
+    adm = KEYS[p.get('cle')]
     op = p.get('op')
     if fn == 'yont_sync':
-        if op == 'ver': return {'ok': True, 'ver': SRV['ver']}
+        if op == 'ver': return {'ok': True, 'ver': SRV['ver'], 'admin': adm}
         if op == 'init':
             SRV['ver'] += 1; SRV['depart'] = SRV['ver']; SRV['data'] = json.loads(p['data']); return {'ok': True, 'ver': SRV['ver']}
         if op == 'pull':
@@ -48,6 +65,9 @@ def rpc(fn, p):
             return {'ok': True, 'ver': SRV['ver'], 'full': json.dumps(SRV['data'])}
         if op == 'push':
             if int(p.get('base', -1)) != SRV['ver']: return {'ok': False, 'stale': True, 'ver': SRV['ver']}
+            if not adm:
+                r = ops_refus(SRV['data'], p.get('ops'))
+                if r: return {'ok': False, 'interdit': True, 'ver': SRV['ver'], 'erreur': 'Refusé par le serveur : ' + r}
             SRV['ver'] += 1; SRV['data'] = apply_ops(SRV['data'], p.get('ops')); SRV['journal'][SRV['ver']] = p.get('ops') or []
             return {'ok': True, 'ver': SRV['ver']}
     if fn == 'yont_err':
@@ -123,6 +143,17 @@ async def main():
         check('vente au prix saisi', await EA('S.sales[S.sales.length-1].total') == 4000)
         await sync_all()
         check('le serveur garde les photos hors des données', not any(k in (SRV['data'].get('photos') or {}) for k in ['castel', 'heineken']))
+        # appareil du personnel (clé propre) : il ne peut ni supprimer une facture ni en baisser le total ; ses nouvelles ventes passent
+        await EB('S.settings.cloud.cle="cle-caisse";saveLocal()')
+        n0 = len(SRV['data']['sales']); first = SRV['data']['sales'][0]['id']
+        await EB(f'S.sales=S.sales.filter(x=>x.id!=="{first}");save()'); await sale(EB, 1)
+        for E in (EB, EA, EB): await E('syncNow("t")'); await asyncio.sleep(1.2)
+        ids = [x['id'] for x in SRV['data']['sales']]
+        check('facture supprimée par un appareil du personnel : refusée et remise', first in ids and await EB(f'S.sales.some(x=>x.id==="{first}")'), f'{n0} → {len(ids)}')
+        check('nouvelle vente du même appareil : acceptée', len(ids) == n0 + 1)
+        await EB('S.audit=[];save()'); await EB('syncNow("t")'); await asyncio.sleep(1.5)
+        check('audit vidé par un appareil du personnel : refusé', len(SRV['data'].get('audit') or []) > 0 and await EB('S.audit.length>0'))
+        await EB('S.settings.cloud.cle="test-cle";saveLocal()')
         check('aucune erreur JavaScript', not errs, '; '.join(errs[:3]))
         # suivi des erreurs : une erreur volontaire doit arriver au serveur avec l'écran et la version
         await EA('setTimeout(()=>{throw new Error("erreur de test volontaire")},0)'); await A.wait_for_timeout(300); await EA('errFlush()'); await A.wait_for_timeout(800)

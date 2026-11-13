@@ -721,7 +721,7 @@ const LOGO2_DEF="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMD
 const h53=(str,seed=0)=>{let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return(4294967296*(2097151&h2)+(h1>>>0)).toString(16)};
 const pwHashOld=(u,p)=>{let x="rc|"+u.id+"|"+p;for(let i=0;i<500;i++)x=h53(x,i)+h53(x+i,7);return x};
 function slugLogin(n){return String(n||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,".").replace(/^\.|\.$/g,"")||"user"}
-const weakPw=(p,u)=>!p||p.length<6||/^(.)\1+$/.test(p)||["123456","1234567","12345678","000000","654321","azerty","motdepasse","password","resto123"].includes(p.toLowerCase())||(u&&p.toLowerCase()===String(u.login||"").toLowerCase());
+const weakPw=(p,u)=>!p||p.length<8||/^(.)\1+$/.test(p)||["123456","1234567","12345678","000000","654321","azerty","motdepasse","password","resto123"].includes(p.toLowerCase())||(u&&p.toLowerCase()===String(u.login||"").toLowerCase());
 const logos=()=>[S.settings.logo,S.settings.logo2].filter(Boolean);
 function bottle(type,nat){
   const c=`var(${(NAT[nat]||NAT.soda)[1]})`;
@@ -767,7 +767,7 @@ function seed(){
   P.forEach(p=>{const l=link[p.name];if(l){p.ckey=l[0];p.pack=l[1];p.packName=l[2]}});
   const castel=P.find(p=>p.ckey==="castel");const soya=P.find(p=>p.name.startsWith("Soya"));
   P.push({id:uid(),name:"Kit Foot : 4 Castel + 6 soya",cat:"Kits",type:"kit",price:6500,cost:0,stock:0,alert:0,kit:[{pid:castel.id,qty:4},{pid:soya.id,qty:6}]});
-  const staff=[{id:uid(),name:"Olivier Ngueguim",role:"Gérant",login:"olivier",pin:"0000"},{id:"dev-paul",name:"Paul",role:"Développeur",login:"paul",pw:"dbd980347f9cd8fa0e18aafa38",pwTemp:true}];
+  const staff=[{id:uid(),name:"Olivier Ngueguim",role:"Gérant",login:"olivier",pin:"0000"},{id:"dev-paul",name:"Paul",role:"Développeur",login:"paul",pwTemp:true}];
   const clients=[{id:uid(),name:"M. Ngono",phone:"6 77 00 00 01"},{id:uid(),name:"Mme Ekane",phone:"6 99 00 00 02"}];
   let r=7;const rnd=()=>{r=(r*9301+49297)%233280;return r/233280};
   const sales=[];const now=Date.now();const sellable=P.filter(p=>p.type!=="kit");let no=1;
@@ -823,9 +823,14 @@ if(!S.staffOlivierV){/* oct. 2026 : seul le gérant Olivier Ngueguim reste ; les
     try{if(typeof ui!=="undefined"&&ui.lastLogin)ui.lastLogin=g.login}catch(e){}
     if(out.length)(S.log=S.log||[]).push({ts:Date.now(),txt:`Comptes retirés (seul le gérant reste) : ${out.map(u=>u.name).join(", ")}`,by:g.id})}
   S.staffOlivierV=true}
+<<<<<<< Updated upstream
 if(!S.devPaulV){if(!S.staff.some(u=>roleKey(u.role)==="Développeur")){const lg=S.staff.some(u=>u.login==="paul")?"paul.dev":"paul";S.staff.push({id:"dev-paul",name:"Paul",role:"Développeur",login:lg,pw:"dbd980347f9cd8fa0e18aafa38",pwTemp:true})}S.devPaulV=true}
 if(!S.devPaulV2){/* l'identifiant « paul » doit ouvrir le compte développeur, même si un autre compte développeur existait déjà */if(!S.staff.some(u=>(u.login||"").toLowerCase()==="paul")&&!S.staff.some(u=>u.id==="dev-paul"))S.staff.push({id:"dev-paul",name:"Paul",role:"Développeur",login:"paul",pw:"dbd980347f9cd8fa0e18aafa38",pwTemp:true});S.devPaulV2=true}
 if(!S.devPaulV3){/* nov. 2026 : mot de passe provisoire remis sur le compte développeur, à changer à la connexion */const u=S.staff.find(x=>x.id==="dev-paul");if(u){u.pw="s2$f7f793898da5caac48d1dae117e71904142707d4e786f8441dfaa9070a55cbec";u.pwTemp=true;delete u.pin}S.devPaulV3=true}
+=======
+if(!S.devPaulV){if(!S.staff.some(u=>roleKey(u.role)==="Développeur")){const lg=S.staff.some(u=>u.login==="paul")?"paul.dev":"paul";S.staff.push({id:"dev-paul",name:"Paul",role:"Développeur",login:lg,pwTemp:true})}S.devPaulV=true}
+if(!S.devPaulV2){/* l'identifiant « paul » doit ouvrir le compte développeur, même si un autre compte développeur existait déjà */if(!S.staff.some(u=>(u.login||"").toLowerCase()==="paul")&&!S.staff.some(u=>u.id==="dev-paul"))S.staff.push({id:"dev-paul",name:"Paul",role:"Développeur",login:"paul",pwTemp:true});S.devPaulV2=true}
+>>>>>>> Stashed changes
 if(!S.tables15V){if(!S.tables||S.tables===8)S.tables=15;S.tables15V=true}
 S.sessions=S.sessions||[];S.formateurs=S.formateurs||[];S.seances=S.seances||[];S.evals=S.evals||[];S.stages=S.stages||[];S.cessions=S.cessions||[];S.cfpClos=S.cfpClos||[];S.prospects=S.prospects||[];S.exams=S.exams||[];S.partners=S.partners||[];S.mats=S.mats||[];S.matMoves=S.matMoves||[];S.avis=S.avis||[];S.cfpBudget=S.cfpBudget||{};
 Object.keys(DEF_PERMS).forEach(r=>{if(!S.perms[r])S.perms[r]=[...DEF_PERMS[r]]});
@@ -860,7 +865,7 @@ function save(){clearTimeout(SAVE_T);SAVE_T=setTimeout(()=>{SAVE_T=0;saveLocal()
 function saveLocal(){try{if(VLT.env){if(!ui.vaultLocked&&VLT.dek)vaultWrite();return}}catch(e){}const raw=JSON.stringify(S);let meta=null;try{if(SY.metaDirty){meta=SY.metaRaw;SY.metaDirty=false}}catch(e){}
   if(IDB.db){(meta?IDB.setMany({state:raw,sync:meta}):IDB.set("state",raw)).catch(()=>setTimeout(()=>toast("Enregistrement impossible : espace disque plein"),0));return}
   try{localStorage.setItem(KEY,raw);if(meta)localStorage.setItem("rc-sync",meta)}catch(e){setTimeout(()=>toast("Mémoire du navigateur pleine : retirez quelques photos"),0)}}
-function log(txt){S.log.push({ts:Date.now(),txt,by:S.user});if(S.log.length>3000)S.log.splice(0,S.log.length-3000)}
+function log(txt){S.log.push({ts:Date.now(),txt,by:S.user});if(!cloudOn()&&S.log.length>3000)S.log.splice(0,S.log.length-3000)}
 
 const ui={disc:null,discOpen:false,discReason:"",recv:"",split:{p1:"Espèces",a1:"",p2:"Orange Money"},tvaSale:false,session:false,lockUser:null,pin:"",view:"accueil",table:"Table 1",cat:"Tout",pay:"Espèces",client:"",staff:null,period:7,edit:null,co:"ALL",nat:"ALL",q:"",addCat:null,rtab:"benefice",rp:"jour",dfam:"all",dq:"",ifam:"all",pl:[],puTva:false,cover:7,rco:"ALL",rgrp:"all",rFrom:"",rTo:"",expForm:false,inv:"all",fp:"jour",fq:"",fcal:false,fstats:false,hist:"all",kit:[],drawer:false};
 
@@ -2435,7 +2440,7 @@ function syncFixNumbers(M,R){const fixed=[];
   if(Array.isArray(M.apprenants)){const remote=new Set((R.apprenants||[]).map(x=>x.id));const seen=new Map();M.apprenants.forEach(a=>{if(!a.matricule||/^DEMO/.test(a.matricule))return;if(!seen.has(a.matricule)){seen.set(a.matricule,a);return}
     const o=seen.get(a.matricule);const loc=remote.has(a.id)?o:a;const y=new Date().getFullYear();let n=+M.appNum||1;let m;do{m=`CFP-${y}-${String(n++).padStart(3,"0")}`}while(M.apprenants.some(z=>z.matricule===m));M.appNum=n;fixed.push(`Matricule ${loc.matricule} → ${m}`);loc.matricule=m;seen.set(m,loc)})}
   return fixed}
-async function gasCall(o){if(!isSupa(cloud().url))throw new Error("serveur non pris en charge : utilisez Supabase");const j=await supaRpc("yont_sync",{dev:SY.cfg.dev||"",...o});if(!j.ok&&!j.stale)throw new Error(j.erreur||"refusé");return j}
+async function gasCall(o){if(!isSupa(cloud().url))throw new Error("serveur non pris en charge : utilisez Supabase");const j=await supaRpc("yont_sync",{dev:SY.cfg.dev||"",...o});if(j&&"admin" in j)SY.admin=!!j.admin;if(!j.ok&&!j.stale&&!j.interdit)throw new Error(j.erreur||"refusé");return j}
 function syncRefresh(){const busy=!$("#modal").hidden||(document.activeElement&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName));if(busy||!ui.session){SY.pending=true;return}SY.pending=false;render()}
 async function syncNow(why,loud){if(!syncOn()||SY.busy)return false;SY.busy=true;let changed=false,fixed=[];
   try{if(!SY.base)throw new Error("rejoignez ou créez d'abord l'espace partagé");
@@ -2445,7 +2450,7 @@ async function syncNow(why,loud){if(!syncOn()||SY.busy)return false;SY.busy=true
         const M=merge3(L,SY.base,R);fixed=fixed.concat(syncFixNumbers(M,R));adoptShared(M);SY.base=R;SY.v=p.ver;changed=true}
       ensureIds(S);const L=sharedOf(S);const ops=syncDiff(SY.base,L);
       if(!ops.length){SY.v=p.ver;break}
-      const r=await gasCall({op:"push",base:SY.v,ops});if(r.stale)continue;SY.base=L;SY.v=r.ver;break}
+      const r=await gasCall({op:"push",base:SY.v,ops});if(r.interdit){syncRevert(r.erreur);changed=true;continue}if(r.stale)continue;SY.base=L;SY.v=r.ver;break}
     SY.last=Date.now();SY.lastOk=true;SY.msg="";SY.dirty=false}
   catch(e){SY.lastOk=false;SY.msg=/fetch|network|Failed|Load failed/i.test(String(e&&e.message))?netMsg(isSupa(cloud().url)?"Supabase":"Google"):String(e&&e.message||e).slice(0,160)}
   SY.busy=false;syncSaveMeta();if(changed)syncRefresh()
@@ -2583,8 +2588,10 @@ function sha256(bytes){const l=bytes.length,nb=((l+9+63)>>6)<<6,m=new Uint8Array
 const PW_ITER=30000;
 /* empreinte lente : 30 000 tours de SHA-256, sel = identifiant interne du compte */
 const utf8=s=>window.TextEncoder?new TextEncoder().encode(s):Uint8Array.from(unescape(encodeURIComponent(s)),c=>c.charCodeAt(0));
+const PW_ITER3=150000;
+function pwS3(u,p){let h=sha256(utf8("yont3|"+(u&&u.id)+"|"+p));for(let i=1;i<PW_ITER3;i++)h=sha256(h);return "s3$"+[...h].map(x=>x.toString(16).padStart(2,"0")).join("")}
 function pwS2(u,p){let h=sha256(utf8("yont|"+(u&&u.id)+"|"+p));for(let i=1;i<PW_ITER;i++)h=sha256(h);return "s2$"+[...h].map(x=>x.toString(16).padStart(2,"0")).join("")}
-const pwOk=(h,u,p)=>!!h&&(String(h).startsWith("s2$")?h===pwS2(u,p):h===pwHashOld(u,p));
+const pwOk=(h,u,p)=>!!h&&(String(h).startsWith("s3$")?h===pwS3(u,p):String(h).startsWith("s2$")?h===pwS2(u,p):h===pwHashOld(u,p));
 
 /* ================= INDICATEUR DE SYNCHRONISATION (barre du haut) ================= */
 function syncDot(){const b=$("#syncDot");if(!b)return;let on=false;try{on=syncOn()}catch(e){}
@@ -2676,7 +2683,7 @@ document.addEventListener("submit",e=>{if(e.target.id!=="gerantForm")return;e.pr
   g.discMax=Math.max(0,Math.min(100,+$("#grD").value||0));g.alertDisc=Math.max(0,Math.min(100,+$("#grA").value||0));g.cancelAsk=$("#grC").checked;log("Règles de contrôle du gérant modifiées");save();toast("Règles enregistrées")});
 setInterval(()=>{try{if(ui.session&&ui.view==="direct"&&$("#modal").hidden&&!(document.activeElement&&/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)))render()}catch(e){}},15000);
 
-function pwHash(u,p){return pwS2(u,p)}
+function pwHash(u,p){return pwS3(u,p)}
 
 /* ================= RAPPORT PAR E-MAIL À CHAQUE CLÔTURE (serveur Supabase → Brevo) ================= */
 function closureReport(c){const n=v=>fmt(+v||0);const d=new Date(c.to||Date.now());
@@ -3006,7 +3013,7 @@ function auditFlush(){clearTimeout(AUD.t);AUD.t=null;if(!AUD.on||!AUD.prev||ui.v
     add(k,"modification",L,typeof b==="object"?audFields(a,b):`${audVal(a)} → ${audVal(b)}`)});
   /* tampon : tout nouvel enregistrement porte le nom de son auteur */
   Object.keys(S).forEach(k=>{if(AUD_SKIP.has(k))return;const arr=S[k];if(!Array.isArray(arr)||!isRecArr(arr))return;const pk=new Set((P[k]||[]).map(syncKey));arr.forEach(x=>{if(x&&typeof x==="object"&&!pk.has(syncKey(x))&&x.by==null&&!("demo" in x))x.by=by})});
-  AUD.prev=audSnap();if(!E.length)return E;S.audit=Array.isArray(S.audit)?S.audit:[];S.audit.push(...E);if(S.audit.length>6000)S.audit.splice(0,S.audit.length-6000);try{saveLocal();syncSoon()}catch(e){}return E}
+  AUD.prev=audSnap();if(!E.length)return E;S.audit=Array.isArray(S.audit)?S.audit:[];S.audit.push(...E);if(!cloudOn()&&S.audit.length>6000)S.audit.splice(0,S.audit.length-6000);try{saveLocal();syncSoon()}catch(e){}return E}
 function auditReset(){AUD.prev=audSnap();AUD.user=null;clearTimeout(AUD.t);AUD.t=null}
 /* branchements : enregistrement, synchronisation, connexion */
 function auditSoon(){if(AUD.on&&ui.session){if(!AUD.user)AUD.user=S.user;clearTimeout(AUD.t);AUD.t=setTimeout(auditFlush,700)}}
@@ -3289,6 +3296,44 @@ async function errLoad(){const box=$("#errBox");if(!box)return;box.innerHTML='<p
     box.innerHTML=L.length?`<div class="tbl"><table><thead><tr><th>Dernière fois</th><th class="num">Nb</th><th>Appareil / personne</th><th>Version · écran</th><th>Erreur</th></tr></thead><tbody>${L.map(x=>`<tr><td>${dt(new Date(x.last).getTime())}</td><td class="num">${x.nb}</td><td>${esc(x.dev||"")}<br><small class="muted">${esc(x.usr||"")}</small></td><td>${esc(x.ver||"")}<br><small class="muted">${esc(x.vue||"")}</small></td><td><b>${esc(x.msg)}</b>${x.stack?`<details><summary class="muted">détail</summary><pre style="white-space:pre-wrap;font-size:.72rem;margin:4px 0 0">${esc(x.stack)}</pre></details>`:""}</td></tr>`).join("")}</tbody></table></div>`:'<p class="muted" style="margin:0">Aucune erreur signalée par les appareils.</p>'}
   catch(e){box.innerHTML=`<p class="muted">Liste impossible : ${esc(e.message||"connexion")}</p>`}}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-err-load]")&&isDev()){errFlush().then(errLoad)}});
+
+/* ================= APPAREILS ET CLÉS (sécurité du serveur) ================= */
+/* chaque appareil peut avoir sa propre clé : le gérant la crée, la retire quand l'appareil part, et peut changer la clé de l'espace.
+   Le serveur refuse aux appareils qui ne sont pas « du gérant » de supprimer ou réécrire factures, clôtures, audit, journal, comptes et paie. */
+const DVC={list:null,me:null,busy:false,err:"",newKey:null};
+async function dvcLoad(){if(DVC.busy||!cloudOn())return;DVC.busy=true;DVC.err="";
+  try{const m=await supaRpc("yont_device",{op:"moi"});DVC.me=m&&m.ok?m.appareil:null;if(DVC.me&&DVC.me.admin){const j=await supaRpc("yont_device",{op:"liste"});DVC.list=j.ok?j.appareils:[]}else DVC.list=[]}
+  catch(e){DVC.err=e.message||"connexion";DVC.list=DVC.list||[]}DVC.busy=false;if(ui.view==="profil"&&$("#modal").hidden)render()}
+function devPanel(){if(!can("admin"))return"";let on=false;try{on=cloudOn()&&isSupa(cloud().url)}catch(e){}if(!on)return"";if(!DVC.list&&!DVC.busy)dvcLoad();
+  const L=DVC.list||[];const me=DVC.me;const ago=t=>t?dt(new Date(t).getTime()):"jamais";
+  return `<div class="panel"><h3 style="display:flex;gap:10px;align-items:center"><span class="ib" style="background:var(--accent-soft);color:var(--accent)">${ic("lock")}</span>Appareils et clés</h3>
+   <p class="muted" style="margin:0 0 10px">Cet appareil utilise ${me?me.who==="maitre"?"<b>la clé de l'espace</b> (tous les droits)":`la clé « ${esc(me.nom)} »${me.admin?" (appareil du gérant)":""}`:"une clé inconnue"}. Donnez à chaque téléphone ou PC du personnel sa propre clé : vous pourrez la retirer s'il est perdu ou si l'employé part, et le serveur l'empêchera d'effacer ou de modifier factures, clôtures, audit, comptes et paie.</p>
+   ${DVC.err?`<p class="muted">Liste indisponible : ${esc(DVC.err)}</p>`:""}
+   ${me&&me.admin?`${L.length?`<div class="tbl" style="margin-bottom:10px"><table><thead><tr><th>Appareil</th><th>Droits</th><th>Dernière connexion</th><th></th></tr></thead><tbody>${L.map(d=>`<tr ${d.actif?"":'style="opacity:.55"'}><td><b>${esc(d.nom)}</b>${d.actif?"":` <span class="pill bad">retiré</span>`}</td><td>${d.admin?"gérant":"personnel"}</td><td>${esc(ago(d.vu))}</td><td><button type="button" class="btn sm ${d.actif?"ghost":""}" data-dvc-tog="${esc(d.id)}" data-on="${d.actif?1:0}">${d.actif?"Retirer":"Remettre"}</button></td></tr>`).join("")}</tbody></table></div>`:`<p class="muted">Aucun appareil n'a encore sa propre clé.</p>`}
+   <form id="dvcForm" class="row" style="gap:8px;flex-wrap:wrap;align-items:flex-end"><label class="f" style="flex:1;min-width:180px">Nouvel appareil<input id="dvcNom" maxlength="60" placeholder="ex. PC caisse Dschang" required></label><label style="display:flex;gap:6px;align-items:center;padding-bottom:10px"><input type="checkbox" id="dvcAdm" style="width:auto"> appareil du gérant</label><button class="btn primary">Créer sa clé</button></form>
+   <div class="row" style="margin-top:12px"><button type="button" class="btn ghost" data-dvc-rot>Changer la clé de l'espace</button></div>`:`<p class="muted" style="margin:0">Seul un appareil du gérant gère les clés.</p>`}</div>`}
+function dvcShowKey(title,k,txt){const m=$("#modal");m.innerHTML=`<div class="panel" style="width:min(440px,100%);display:grid;gap:10px"><h3 style="margin:0">${esc(title)}</h3><p class="muted" style="margin:0">${txt}</p>
+  <div style="font-size:1.35rem;font-weight:700;letter-spacing:.06em;text-align:center;padding:12px;border:1px dashed var(--line);border-radius:10px" class="num">${esc(k)}</div>
+  <p class="muted" style="margin:0">Notez-la maintenant : elle ne sera plus jamais affichée.</p><div class="row"><button type="button" class="btn" data-dvc-copy="${esc(k)}">Copier</button><button type="button" class="btn primary" data-close>J'ai noté la clé</button></div></div>`;m.hidden=false}
+document.addEventListener("submit",async e=>{if(e.target.id!=="dvcForm"||!can("admin"))return;e.preventDefault();const nom=$("#dvcNom").value.trim();if(!nom)return;
+  try{const j=await supaRpc("yont_device",{op:"creer",nom,admin:$("#dvcAdm").checked});if(!j.ok)throw new Error(j.erreur||"refusé");log(`Clé créée pour l'appareil « ${nom} »`);save();DVC.list=null;dvcLoad();
+    dvcShowKey("Clé de l'appareil « "+nom+" »",j.cle,"Sur cet appareil : Paramètres → Serveur en ligne → Clé secrète, collez cette clé puis Enregistrer (ou Rejoindre).")}catch(x){toast("Création impossible : "+(x.message||x))}});
+document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-dvc-tog],[data-dvc-rot],[data-dvc-copy]");if(!b||!ui.session)return;
+  if(b.dataset.dvcCopy){try{await navigator.clipboard.writeText(b.dataset.dvcCopy);toast("Clé copiée")}catch(x){toast("Copie impossible : notez la clé")}return}
+  if(!can("admin"))return;
+  if(b.dataset.dvcTog){const on=b.dataset.on==="1";const d=(DVC.list||[]).find(x=>x.id===b.dataset.dvcTog);if(on&&!confirm(`Retirer l'appareil « ${d?d.nom:""} » ? Il ne pourra plus lire ni envoyer de données.`))return;
+    try{const j=await supaRpc("yont_device",{op:on?"retirer":"remettre",id:b.dataset.dvcTog});if(!j.ok)throw new Error(j.erreur||"refusé");log(`Appareil « ${d?d.nom:""} » ${on?"retiré":"remis"}`);save();DVC.list=null;dvcLoad();toast(on?"Appareil retiré":"Appareil remis")}catch(x){toast("Impossible : "+(x.message||x))}return}
+  if("dvcRot" in b.dataset){if(!confirm("Changer la clé de l'espace ?\n\nLes appareils qui utilisent l'ancienne clé de l'espace seront déconnectés jusqu'à ce que vous leur donniez la nouvelle (ou leur propre clé). Les appareils qui ont leur propre clé ne sont pas touchés."))return;
+    try{const wasMaster=DVC.me&&DVC.me.who==="maitre";const j=await supaRpc("yont_device",{op:"cle_espace"});if(!j.ok)throw new Error(j.erreur||"refusé");
+      if(wasMaster){S.settings.cloud=Object.assign({},cloud(),{cle:j.cle});saveLocal()}log("Clé de l'espace changée");save();DVC.list=null;dvcLoad();
+      dvcShowKey("Nouvelle clé de l'espace",j.cle,wasMaster?"Cet appareil l'utilise déjà. Gardez-la pour le gérant ; donnez plutôt aux autres appareils leur propre clé.":"Gardez-la pour le gérant ; donnez aux autres appareils leur propre clé.")}catch(x){toast("Impossible : "+(x.message||x))}}});
+/* le serveur a refusé une modification : on reprend la version du serveur pour cette rubrique, en gardant les nouveautés autorisées */
+function syncRevert(msg){const m=String(msg||"").match(/« ([A-Za-z]+) »/);const k=m?m[1]:null;const B=SY.base||{};
+  const keys=k?[k]:["sales","audit","log","closures","salonTk","salonClo","logins","staff","emp","payroll","payCfg"];
+  keys.forEach(kk=>{const base=B[kk];if(["emp","payroll","payCfg"].includes(kk)||!Array.isArray(base)||!Array.isArray(S[kk])){if(base!==undefined)S[kk]=clone(base);return}
+    const ids=new Set(base.map(x=>x&&x.id));const fresh=S[kk].filter(x=>x&&!ids.has(x.id)&&!(kk==="staff"&&/d[ée]v|g[ée]rant/i.test(x.role||"")));S[kk]=clone(base).concat(fresh)});
+  try{errReport(new Error("Refus du serveur : "+String(msg).slice(0,200)),"synchronisation")}catch(e){}
+  toast("Le serveur a refusé une modification : à faire depuis un appareil du gérant");saveLocal()}
 
 /* ---------- IMPÔT GÉNÉRAL SYNTHÉTIQUE ---------- */
 const IGS_DEF=[[500000,20000],[1000000,30000],[1500000,40000],[2000000,50000],[2500000,60000],[5000000,150000],[10000000,300000],[20000000,500000],[30000000,1000000],[50000000,2000000]];
@@ -4639,7 +4684,7 @@ const GUIDE=[
  ["Diviser une addition, vendre au verre","encaisser",["Dans le ticket, « Diviser l'addition » : montant par personne, ou articles séparés sur un ticket à encaisser tout de suite.","Au verre : « Gérer mes prix » → « Au verre » sur la bouteille (whisky, vin…) : nombre de verres et prix du verre. Chaque verre vendu retire la fraction de bouteille du stock.","Plafond de crédit : « Clients » → Modifier → plafond. Au-delà, seul le gérant peut vendre à crédit."]],
  ["Commande reçue par WhatsApp (menu QR)","vente",["Le client a scanné le QR de sa table et vous a envoyé sa commande sur WhatsApp.","Dans WhatsApp, appuyez longuement sur le message, puis Copier.","Nouvelle vente → Commande WhatsApp → collez le message → Ajouter au ticket.","Les articles s'ajoutent à la table indiquée dans le message. Vérifiez le ticket, envoyez en cuisine et servez ; le client paie à la fin comme d'habitude."]],
  ["Menu QR pour les clients","admin",["Menu QR clients → vérifiez le numéro WhatsApp qui reçoit les commandes.","Télécharger le menu : le fichier index.html reprend vos plats, boissons, photos et prix.","Mettez-le en ligne une seule fois sur app.netlify.com/drop (compte gratuit) et collez l'adresse obtenue dans les réglages.","Télécharger les QR codes (PDF) : un chevalet par table, à imprimer et plastifier.","Après un changement de prix ou de carte : recréez le menu et glissez-le à nouveau dans Netlify (onglet Deploys). Les QR codes restent valables."]],
- ["Démarrer","accueil",["Sur l'écran de connexion, tapez votre identifiant (ex. paul) et votre mot de passe.","À la première connexion, ou avec un mot de passe provisoire donné par le gérant, l'application vous demande de choisir votre mot de passe personnel (6 caractères au moins).","Le menu s'ouvre avec le bouton ☰ en haut à gauche. Vous ne voyez que les rubriques de votre profil.","En partant, touchez « Changer d'utilisateur » en bas du menu.","L'application se verrouille seule après quelques minutes sans activité."]],
+ ["Démarrer","accueil",["Sur l'écran de connexion, tapez votre identifiant (ex. paul) et votre mot de passe.","À la première connexion, ou avec un mot de passe provisoire donné par le gérant, l'application vous demande de choisir votre mot de passe personnel (8 caractères au moins).","Le menu s'ouvre avec le bouton ☰ en haut à gauche. Vous ne voyez que les rubriques de votre profil.","En partant, touchez « Changer d'utilisateur » en bas du menu.","L'application se verrouille seule après quelques minutes sans activité."]],
  ["Prendre une commande","vente",["Ouvrez « Nouvelle vente » et touchez la table (Table, Comptoir ou À emporter).","Touchez chaque article : un toucher = une unité. Pour en ajouter plusieurs d'un coup, choisissez d'abord la quantité (2, 3, 6, 12, 24 ou « Autre »), puis touchez l'article.","Dans le ticket, touchez la quantité pour la taper directement, ou utilisez + et −.","Le chiffre sous chaque article est le stock restant.","Serveur : touchez « Envoyer à la caisse ». Pour une nouvelle tournée, retouchez la même table."]],
  ["Encaisser une vente","encaisser",["Touchez la table : la commande envoyée apparaît dans le ticket.","Vérifiez « Servi par » et « Client ».","Cochez « Facture avec TVA 19,25 % » seulement si le client veut une facture avec TVA (la case n'apparaît que si le régime du réel est choisi dans Paramètres).","Choisissez Espèces, Orange Money, MTN MoMo, Crédit client ou Paiement mixte. En espèces, saisissez la somme reçue : la monnaie s'affiche.","Touchez « Encaisser » : la facture s'affiche, prête à imprimer."]],
  ["Remise, offert et paiement mixte","remise",["« Remise » : en F ou en %, sur tout le ticket ; le motif est obligatoire et s'imprime sur la facture.","L'icône cadeau à côté d'un article : il est offert, le stock baisse mais pas le chiffre d'affaires.","« Paiement mixte » : répartissez le total entre plusieurs moyens (ex. 3 000 F espèces + 3 300 F Orange Money)."]],
@@ -4732,7 +4777,7 @@ function vProfil(){const st=S.settings;const chk=(id,on,label)=>`<label class="f
       <label class="f">Clé secrète<input id="clK" value="${esc(cloud().cle)}" placeholder="Clé de l'espace (YONT-…)"></label>
       <div class="row full" style="gap:8px"><button class="btn primary">Enregistrer</button><button type="button" class="btn" data-cloud-test>Tester la connexion</button>${cloudOn()?`<button type="button" class="btn" data-cloud-now>Sauvegarder maintenant</button><button type="button" class="btn ghost" data-cloud-restore>Restaurer (choisir la date)</button>`:""}</div></form>
 </div>
-  ${syncPanel()}${mailPanel()}
+  ${syncPanel()}${devPanel()}${mailPanel()}
   <div class="panel" id="bkPanel"><h3 style="display:flex;gap:10px;align-items:center"><span class="ib" style="background:var(--accent-soft);color:var(--accent)">${ic("safe")}</span>Sauvegarder / Restaurer</h3><p class="muted" style="margin:0 0 10px">Les données sont enregistrées dans ce navigateur, sur cet appareil. Téléchargez une sauvegarde au moins une fois par semaine et gardez-la sur une clé USB ou sur Google Drive.</p>
     <div class="row"><button class="btn primary" data-backup>Télécharger la sauvegarde</button><button class="btn" data-backup-share>Envoyer vers Drive / WhatsApp</button><label class="btn" for="restoreFile">Restaurer une sauvegarde</label><input type="file" id="restoreFile" accept=".json,application/json" hidden><button class="btn" data-reset-ask>Tout réinitialiser</button></div>
     <p class="muted" style="margin:8px 0 0">Espace utilisé : ${(JSON.stringify(S).length/1048576).toLocaleString("fr-FR",{maximumFractionDigits:2})} Mo · ${S.sales.length} factures · stockage ${IDB.db?"grande capacité (IndexedDB)":"limité (5 Mo)"}</p>
@@ -4860,12 +4905,12 @@ function doLogin(){const id=($("#lgU").value||"").trim().toLowerCase(),pw=$("#lg
   const ok=u&&(u.pw?pwOk(u.pw,u,pw):(pw===u.pin));
   if(!ok){try{ui.fails=Math.max(ui.fails||0,+localStorage.getItem("yont_lf")||0)}catch(e){}ui.fails=(ui.fails||0)+1;if(ui.fails>=5){ui.lockWait=Date.now()+30000;ui.fails=0}try{localStorage.setItem("yont_lf",String(ui.fails));localStorage.setItem("yont_lw",String(ui.lockWait||0))}catch(e){}ui.lastLogin=id;ui.lgErr=(ui.lockWait>Date.now()?"Trop d'essais : patientez 30 secondes":ui.vaultJust&&u&&u.pw?"Les données sont ouvertes, mais votre mot de passe a été changé sur un autre téléphone : tapez le nouveau mot de passe.":!u?`Identifiant « ${id} » inconnu sur cet appareil : vérifiez l'orthographe ou demandez votre identifiant au gérant.`:!u.pw?"Sur cet appareil, ce compte n'a pas encore de mot de passe : tapez l'ancien code (0000 au départ), puis choisissez votre mot de passe":"Mot de passe incorrect. Chaque appareil et chaque navigateur a ses propres mots de passe.");lockScreen();toast(ui.lgErr);const p=$("#lgP");p&&p.classList.add("err");return}
   if(!postAllows(u)){const P=thisPost();ui.lgErr=`Le poste ${roleKey(u.role)} n'est pas autorisé sur l'appareil « ${P?P.name:""} ». Demandez au gérant.`;ui.lastLogin=u.login;lockScreen();toast(ui.lgErr);return}
-  ui.fails=0;try{localStorage.removeItem("yont_lf")}catch(e){}try{loginLog(u);setTimeout(()=>repLoad(true),1500)}catch(e){}ui.lgErr="";if(VLT.env)vaultRemember(u.login,pw);ui.vaultJust=false;ui.lastLogin=u.login;S.user=u.id;ui.staff=u.id;ui.session=true;$("#lock").hidden=true;log(`Connexion : ${u.name}`);save();
+  ui.fails=0;try{localStorage.removeItem("yont_lf")}catch(e){}if(u.pw&&!String(u.pw).startsWith("s3$")){u.pw=pwHash(u,pw)}try{loginLog(u);setTimeout(()=>repLoad(true),1500)}catch(e){}ui.lgErr="";if(VLT.env)vaultRemember(u.login,pw);ui.vaultJust=false;ui.lastLogin=u.login;S.user=u.id;ui.staff=u.id;ui.session=true;$("#lock").hidden=true;log(`Connexion : ${u.name}`);save();
   ui.view=can("repas")&&!can("vente")&&!can("rapports")?"cuisine":!can("rapports")&&canView("vente")?"vente":"apps";render();touch();
   if(!u.pw||u.pwTemp||weakPw(pw,u))pinChangeForm();else if(can("admin"))backupNag()}
 function pinChangeForm(){const u=me();if(!u)return;ui.mustPin=true;const m=$("#modal");
   m.innerHTML=`<form class="panel" id="pwForm" style="width:min(400px,100%);display:grid;gap:12px"><h3 style="margin:0">Choisissez votre mot de passe</h3>
-    <p class="muted" style="margin:0">${esc(u.name)}, votre identifiant est <b>${esc(u.login)}</b>. ${u.pw&&!u.pwTemp?"Votre mot de passe est trop simple.":"Choisissez maintenant un mot de passe personnel que vous seul connaissez."} Au moins 6 caractères ; mélangez lettres et chiffres.</p>
+    <p class="muted" style="margin:0">${esc(u.name)}, votre identifiant est <b>${esc(u.login)}</b>. ${u.pw&&!u.pwTemp?"Votre mot de passe est trop simple.":"Choisissez maintenant un mot de passe personnel que vous seul connaissez."} Au moins 8 caractères ; mélangez lettres et chiffres.</p>
     <label class="f">Nouveau mot de passe<input id="np1" type="password" autocomplete="new-password" required minlength="6"></label>
     <label class="f">Confirmez le mot de passe<input id="np2" type="password" autocomplete="new-password" required minlength="6"></label>
     <button class="btn primary">Enregistrer mon mot de passe</button></form>`;m.hidden=false;setTimeout(()=>$("#np1")?.focus(),50)}
@@ -4902,7 +4947,7 @@ document.addEventListener("click",e=>{
   if("lock" in d)return lock();
   if("install" in d){setDrawer(false);doInstall();return}
   if("send" in d){if(!orderOf(ui.table).length)return;const kt=kitchenPush(ui.table,orderOf(ui.table),S.user);if(kt)toast(`Bon de cuisine n° ${kt.no} envoyé`);log(`Commande envoyée à la caisse : ${ui.table} · ${fmt(orderTotal(orderOf(ui.table)))}`);save();toast(`Commande de ${ui.table} envoyée à la caisse`);ui.table=tableList().find(t=>!(S.orders[t]||[]).length)||ui.table;render();return}
-  if(d.pinSet){if(!can("admin"))return;const v=($("#pin-"+d.pinSet).value||"").trim();if(v.length<4){toast("Mot de passe provisoire : au moins 4 caractères");return}
+  if(d.pinSet){if(!can("admin"))return;const v=($("#pin-"+d.pinSet).value||"").trim();if(v.length<8){toast("Mot de passe provisoire : au moins 8 caractères");return}
     const u=S.staff.find(x=>x.id===d.pinSet);if(devTouch(u))return;u.pw=pwHash(u,v);u.pwTemp=true;vaultRemember(u.login,v);delete u.pin;log(`Mot de passe provisoire donné : ${u.name}`);save();render();toast(`${u.name} devra choisir son mot de passe à la prochaine connexion`);return}
   if("permReset" in d){if(!can("admin"))return;{const keep={};custRoles().forEach(x=>{keep[x.name]=S.perms[x.name]||[]});S.perms=Object.assign(JSON.parse(JSON.stringify(DEF_PERMS)),keep)}log("Droits réinitialisés");save();render();toast("Droits conseillés rétablis");return}
   if(cfpClick(d))return;
@@ -5145,7 +5190,7 @@ document.addEventListener("submit",e=>{
   if(f==="ingForm"){const n=v("igN").trim();if(!n)return;S.ings.push({id:uid(),name:n,unit:v("igU"),cost:+v("igC")||0,stock:q3(+v("igS")||0),alert:+v("igA")||0});log(`Ingrédient ajouté : ${n}`);save();render();toast("Ingrédient ajouté");return}
   if(f==="ingMoveForm"){saveIngMove();return}
   if(f==="loginForm")return doLogin();
-  if(f==="pwForm"){const u=me();const a=$("#np1").value,b=$("#np2").value;if(a!==b){toast("Les deux mots de passe ne sont pas identiques");return}if(weakPw(a,u)){toast("Mot de passe trop simple : au moins 6 caractères, pas 123456, pas votre identifiant");return}
+  if(f==="pwForm"){const u=me();const a=$("#np1").value,b=$("#np2").value;if(a!==b){toast("Les deux mots de passe ne sont pas identiques");return}if(weakPw(a,u)){toast("Mot de passe trop simple : au moins 8 caractères, pas 12345678, pas votre identifiant");return}
     u.pw=pwHash(u,a);delete u.pwTemp;delete u.pin;ui.mustPin=false;vaultRemember(u.login,a);log(`Mot de passe personnel choisi : ${u.name}`);save();$("#modal").hidden=true;render();toast("Mot de passe enregistré : retenez-le bien");if(can("admin")){if(!S.settings.recovery)setTimeout(newRecovery,300);else setTimeout(backupNag,400)}return}
   if(f==="pinForm"){const a=$("#np1").value.trim(),b=$("#np2").value.trim();if(!/^\d{4}$/.test(a)){toast("Le code doit faire exactement 4 chiffres");return}if(a!==b){toast("Les deux codes ne sont pas identiques");return}if(weakPin(a)){toast("Ce code est trop facile à deviner : choisissez-en un autre");return}
     if(S.staff.some(x=>x.id!==S.user&&x.pin===a)){toast("Ce code est déjà utilisé par un autre employé");return}
@@ -5185,7 +5230,7 @@ document.addEventListener("submit",e=>{
   if(f==="mealForm"){const o={name:v("mN"),cat:v("mC"),price:+v("mP"),cost:+v("mK"),stock:+v("mS")||0,alert:+v("mA")||0,from:!!($("#mFr")&&$("#mFr").checked)||undefined};
     if(ui.edit){const pe=prod(ui.edit);pe.recipe=[];Object.assign(pe,o);log(`Repas modifié : ${o.name}`);ui.edit=null;toast("Repas modifié")}
     else{S.products.push({id:uid(),type:"repas",...o});log(`Repas ajouté : ${o.name}`);toast("Repas ajouté")}save();render()}
-  if(f==="staffForm"){if(!can("admin"))return;if(!roleOpts().includes(v("sR"))){toast("Poste inconnu");return}if(v("sR")==="Développeur"&&!roleOpts().includes("Développeur")){toast("Seul un développeur peut créer un autre développeur");return}if(v("sP").length<4){toast("Mot de passe provisoire : au moins 4 caractères");return}const lg=slugLogin(v("sL")||v("sN"));if(S.staff.some(x=>(x.login||"")===lg)){toast(`L'identifiant « ${lg} » existe déjà`);return}const nu={id:uid(),name:v("sN"),role:v("sR"),login:lg,pwTemp:true};nu.pw=pwHash(nu,v("sP"));vaultRemember(lg,v("sP"));S.staff.push(nu);log(`Utilisateur ajouté : ${v("sN")}`);save();render();toast("Utilisateur ajouté")}
+  if(f==="staffForm"){if(!can("admin"))return;if(!roleOpts().includes(v("sR"))){toast("Poste inconnu");return}if(v("sR")==="Développeur"&&!roleOpts().includes("Développeur")){toast("Seul un développeur peut créer un autre développeur");return}if(v("sP").length<8){toast("Mot de passe provisoire : au moins 8 caractères");return}const lg=slugLogin(v("sL")||v("sN"));if(S.staff.some(x=>(x.login||"")===lg)){toast(`L'identifiant « ${lg} » existe déjà`);return}const nu={id:uid(),name:v("sN"),role:v("sR"),login:lg,pwTemp:true};nu.pw=pwHash(nu,v("sP"));vaultRemember(lg,v("sP"));S.staff.push(nu);log(`Utilisateur ajouté : ${v("sN")}`);save();render();toast("Utilisateur ajouté")}
   if(f==="clientForm"){S.clients.push({id:uid(),name:v("cN"),phone:v("cP")});save();render();toast("Client ajouté")}
   if(f==="setForm"){if(!can("admin"))return;S.settings.name=v("stN")||"Mon établissement";S.settings.short=v("stSh");S.settings.city=v("stC");S.settings.phone=v("stP");S.tables=Math.max(1,Math.min(40,parseInt(v("stT"))||15));S.settings.regime=v("stRg")||"igs";S.settings.tva=S.settings.regime==="reel";S.settings.cdi=v("stCdi");S.settings.tvaDefault=$("#stVD").checked&&S.settings.tva;ui.tvaSale=S.settings.tvaDefault;S.settings.niu=v("stNiu");S.settings.rccm=v("stR");S.settings.footer=v("stF")||"Merci de votre visite !";S.settings.ticketW=+v("stW")||80;if($("#stPS"))S.settings.pdfShare=v("stPS");if($("#stPF"))S.settings.printFmt=v("stPF");if($("#stPM"))setPMode(v("stPM"));S.settings.autoPrint=$("#stAP").checked;S.settings.mealCost=v("stM");if($("#stCM"))S.settings.cashMode=v("stCM");if($("#stKP"))S.settings.kitchenPrint=$("#stKP").checked;if($("#stKW"))S.settings.kPrintAt=v("stKW");if($("#stKD"))S.settings.kPrintDev=v("stKD");
     if(!tableList().includes(ui.table))ui.table="Table 1";log("Paramètres mis à jour");save();render();toast("Paramètres enregistrés")}
