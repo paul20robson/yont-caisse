@@ -1,5 +1,1 @@
-<<<<<<< Updated upstream
-Accès développeur réinitialisé
-=======
 Sécurité : une clé par appareil, registres protégés sur le serveur, mots de passe renforcés (8 caractères)
->>>>>>> Stashed changes
