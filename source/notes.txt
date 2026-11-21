@@ -1,1 +1,1 @@
-Sécurité : une clé par appareil, registres protégés sur le serveur, mots de passe renforcés (8 caractères)
+Repas : « prix de revient » (et non plus prix d'achat) ; une réception d'achat ne modifie plus le prix de revient d'un repas.
